@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <title>Traveline — Travel is a line, not a dot.</title>
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,6 +16,13 @@
     font-feature-settings:"palt" 1,"kern" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+  }
+  img, svg { max-width: 100%; }
+  @media (max-width: 768px) {
+    .twk-panel { width: auto !important; max-width: calc(100vw - 24px) !important;
+                 right: 12px !important; bottom: 12px !important; }
   }
 
   /* selection */

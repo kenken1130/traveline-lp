@@ -4,6 +4,20 @@
 
 const { useState, useEffect, useRef } = React;
 
+// -- Responsive hook ------------------------------------------
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= breakpoint : false
+  );
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth <= breakpoint);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [breakpoint]);
+  return isMobile;
+}
+window.useIsMobile = useIsMobile;
+
 // -- Shared animated route line ------------------------------
 function AnimatedRouteLine({ width=1600, height=900, color="#C04A2B", strokeWidth=2, points, delay=0, durationMs=2800 }) {
   const pathRef = useRef(null);
@@ -63,6 +77,7 @@ function AnimatedRouteLine({ width=1600, height=900, color="#C04A2B", strokeWidt
 
 // -- Email signup --------------------------------------------
 function WaitlistInline({ t, dark=false, compact=false }) {
+  const isMobile = useIsMobile();
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const submit = (e) => { e.preventDefault(); if (email.includes("@")) setSent(true); };
@@ -88,18 +103,22 @@ function WaitlistInline({ t, dark=false, compact=false }) {
   }
 
   return (
-    <form onSubmit={submit} style={{ display:"flex", gap:"8px", maxWidth: compact ? 460 : 520 }}>
+    <form onSubmit={submit} style={{
+      display:"flex", gap:"8px", maxWidth: compact ? 460 : 520,
+      flexDirection: isMobile ? "column" : "row", width: isMobile ? "100%" : "auto",
+    }}>
       <input type="email" value={email} onChange={e=>setEmail(e.target.value)} required
         placeholder={t.hero.placeholder}
         style={{
           flex:1, padding:"16px 18px", fontFamily:"Inter, 'Noto Sans JP', sans-serif",
           fontSize:"15px", border:`1px solid ${inputBorder}`, background: inputBg, color: inputColor,
-          outline:"none", letterSpacing:".01em",
+          outline:"none", letterSpacing:".01em", width: isMobile ? "100%" : "auto",
         }}/>
       <button type="submit" style={{
         padding:"16px 24px", background: btnBg, color: btnColor, border:"none",
         fontFamily:"Inter, 'Noto Sans JP', sans-serif", fontSize:"14px", fontWeight:600,
         letterSpacing:".08em", textTransform:"uppercase", cursor:"pointer", whiteSpace:"nowrap",
+        width: isMobile ? "100%" : "auto",
       }}>{t.hero.submit}</button>
     </form>
   );
@@ -109,11 +128,15 @@ function WaitlistInline({ t, dark=false, compact=false }) {
 // HERO 01 · Cinematic photo + drawn line + minimal type
 // -----------------------------------------------------------------
 function HeroPhoto({ t, lang, onLangToggle }) {
+  const isMobile = useIsMobile();
   // izu route points reused for visual
   const pts = [[5,72],[18,68],[32,58],[48,52],[62,46],[74,38],[88,30],[100,22]];
   return (
     <section style={{
-      position:"relative", height:"100vh", minHeight: 820, color:"#F4F1EA",
+      position:"relative",
+      height: isMobile ? "auto" : "100vh",
+      minHeight: isMobile ? "100vh" : 820,
+      color:"#F4F1EA",
       background:"#0B0A08", overflow:"hidden",
     }}>
       {/* photo */}
@@ -138,7 +161,8 @@ function HeroPhoto({ t, lang, onLangToggle }) {
       {/* content */}
       <div style={{
         position:"absolute", inset:0, zIndex:3, display:"flex", flexDirection:"column",
-        justifyContent:"flex-end", padding:"0 80px 120px",
+        justifyContent:"flex-end",
+        padding: isMobile ? "0 20px 80px" : "0 80px 120px",
       }}>
         <div style={{ maxWidth: 1240 }}>
           <div style={{
@@ -147,8 +171,10 @@ function HeroPhoto({ t, lang, onLangToggle }) {
           }}>{t.hero.eyebrow}</div>
 
           <h1 style={{
-            margin:"32px 0 0", fontFamily:"'Noto Serif JP', serif", fontWeight:500,
-            fontSize:"clamp(60px, 9vw, 156px)", lineHeight:1.02, letterSpacing:"-.015em",
+            margin: isMobile ? "20px 0 0" : "32px 0 0",
+            fontFamily:"'Noto Serif JP', serif", fontWeight:500,
+            fontSize: isMobile ? "clamp(42px, 11vw, 64px)" : "clamp(60px, 9vw, 156px)",
+            lineHeight:1.02, letterSpacing:"-.015em",
             color:"#F4F1EA",
           }}>
             {t.hero.tagline}<br/>
@@ -156,16 +182,17 @@ function HeroPhoto({ t, lang, onLangToggle }) {
           </h1>
 
           <div style={{
-            marginTop:48, fontFamily:"Inter", fontSize:18, fontWeight:300, color:"rgba(244,241,234,.7)",
+            marginTop: isMobile ? 28 : 48,
+            fontFamily:"Inter", fontSize: isMobile ? 15 : 18, fontWeight:300, color:"rgba(244,241,234,.7)",
             letterSpacing:".02em",
           }}>{t.hero.jpKicker}</div>
 
           <p style={{
-            marginTop:48, maxWidth:680, fontFamily:"'Noto Sans JP', Inter, sans-serif",
-            fontSize:17, lineHeight:1.7, color:"rgba(244,241,234,.78)", fontWeight:300,
+            marginTop: isMobile ? 28 : 48, maxWidth:680, fontFamily:"'Noto Sans JP', Inter, sans-serif",
+            fontSize: isMobile ? 15 : 17, lineHeight:1.7, color:"rgba(244,241,234,.78)", fontWeight:300,
           }}>{t.hero.sub}</p>
 
-          <div style={{ marginTop:48 }}>
+          <div style={{ marginTop: isMobile ? 32 : 48 }}>
             <WaitlistInline t={t} dark/>
             <div style={{ marginTop:14, fontFamily:"Inter", fontSize:12, letterSpacing:".14em",
                           textTransform:"uppercase", color:"rgba(244,241,234,.45)" }}>
@@ -175,12 +202,14 @@ function HeroPhoto({ t, lang, onLangToggle }) {
         </div>
 
         {/* scroll hint */}
-        <div style={{ position:"absolute", right:80, bottom:80, display:"flex",
-                      alignItems:"center", gap:12, color:"rgba(244,241,234,.5)",
-                      fontFamily:"Inter", fontSize:11, letterSpacing:".24em", textTransform:"uppercase" }}>
-          <span>Scroll</span>
-          <div style={{ width:32, height:1, background:"rgba(244,241,234,.4)" }}/>
-        </div>
+        {!isMobile && (
+          <div style={{ position:"absolute", right:80, bottom:80, display:"flex",
+                        alignItems:"center", gap:12, color:"rgba(244,241,234,.5)",
+                        fontFamily:"Inter", fontSize:11, letterSpacing:".24em", textTransform:"uppercase" }}>
+            <span>Scroll</span>
+            <div style={{ width:32, height:1, background:"rgba(244,241,234,.4)" }}/>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -190,6 +219,7 @@ function HeroPhoto({ t, lang, onLangToggle }) {
 // HERO 02 · Type-forward — huge 線 with photo as accent
 // -----------------------------------------------------------------
 function HeroType({ t, lang, onLangToggle }) {
+  const isMobile = useIsMobile();
   return (
     <section style={{
       position:"relative", minHeight:"100vh", background:"#F4F1EA", color:"#14110E",
@@ -198,8 +228,11 @@ function HeroType({ t, lang, onLangToggle }) {
       <LpNav lang={lang} onLangToggle={onLangToggle} t={t} />
 
       <div style={{
-        display:"grid", gridTemplateColumns:"1.3fr 1fr", gap:80,
-        padding:"180px 80px 120px", minHeight:"100vh", alignItems:"center",
+        display:"grid",
+        gridTemplateColumns: isMobile ? "1fr" : "1.3fr 1fr",
+        gap: isMobile ? 40 : 80,
+        padding: isMobile ? "120px 20px 60px" : "180px 80px 120px",
+        minHeight:"100vh", alignItems:"center",
       }}>
         {/* left */}
         <div>
@@ -209,8 +242,10 @@ function HeroType({ t, lang, onLangToggle }) {
           }}>{t.hero.eyebrow}</div>
 
           <h1 style={{
-            margin:"32px 0 0", fontFamily:"'Noto Serif JP', serif", fontWeight:500,
-            fontSize:"clamp(64px, 10vw, 180px)", lineHeight:.98, letterSpacing:"-.02em",
+            margin: isMobile ? "20px 0 0" : "32px 0 0",
+            fontFamily:"'Noto Serif JP', serif", fontWeight:500,
+            fontSize: isMobile ? "clamp(44px, 12vw, 68px)" : "clamp(64px, 10vw, 180px)",
+            lineHeight:.98, letterSpacing:"-.02em",
           }}>
             {t.hero.tagline}<br/>
             <span style={{ position:"relative", display:"inline-block" }}>
@@ -244,7 +279,7 @@ function HeroType({ t, lang, onLangToggle }) {
         </div>
 
         {/* right — photo column with overlaid mini map */}
-        <div style={{ position:"relative", height:"min(78vh, 760px)" }}>
+        <div style={{ position:"relative", height: isMobile ? 360 : "min(78vh, 760px)" }}>
           <image-slot id="lp-hero-photo-side"
             placeholder="Mountain pass or coastal road · vertical"
             style={{
@@ -276,6 +311,7 @@ function HeroType({ t, lang, onLangToggle }) {
 // HERO 03 · Split — left type, right an animated map of multiple lines
 // -----------------------------------------------------------------
 function HeroSplit({ t, lang, onLangToggle }) {
+  const isMobile = useIsMobile();
   const routes = [
     { points: window.LP_ROUTES_GEOM.izu.points,    delay: 400  },
     { points: window.LP_ROUTES_GEOM.tohoku.points, delay: 900  },
@@ -290,18 +326,25 @@ function HeroSplit({ t, lang, onLangToggle }) {
       <LpNav lang={lang} onLangToggle={onLangToggle} t={t} />
 
       <div style={{
-        display:"grid", gridTemplateColumns:"1fr 1fr", minHeight:"100vh",
+        display:"grid",
+        gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+        minHeight:"100vh",
       }}>
         {/* left */}
-        <div style={{ padding:"180px 64px 120px 80px", display:"flex", flexDirection:"column", justifyContent:"center" }}>
+        <div style={{
+          padding: isMobile ? "120px 20px 60px" : "180px 64px 120px 80px",
+          display:"flex", flexDirection:"column", justifyContent:"center"
+        }}>
           <div style={{
             fontFamily:"Inter", fontSize:13, letterSpacing:".32em", textTransform:"uppercase",
             color:"#C04A2B", fontWeight:500,
           }}>{t.hero.eyebrow}</div>
 
           <h1 style={{
-            margin:"32px 0 0", fontFamily:"'Noto Serif JP', serif", fontWeight:500,
-            fontSize:"clamp(56px, 7vw, 124px)", lineHeight:1.04, letterSpacing:"-.015em",
+            margin: isMobile ? "20px 0 0" : "32px 0 0",
+            fontFamily:"'Noto Serif JP', serif", fontWeight:500,
+            fontSize: isMobile ? "clamp(40px, 10vw, 60px)" : "clamp(56px, 7vw, 124px)",
+            lineHeight:1.04, letterSpacing:"-.015em",
           }}>
             {t.hero.tagline}<br/>
             <span style={{ color:"#C04A2B" }}>{t.hero.tagline2}</span>
@@ -326,7 +369,10 @@ function HeroSplit({ t, lang, onLangToggle }) {
         </div>
 
         {/* right — map of japan-ish with lines drawing */}
-        <div style={{ position:"relative", background:"#0B0A08", overflow:"hidden" }}>
+        <div style={{
+          position:"relative", background:"#0B0A08", overflow:"hidden",
+          minHeight: isMobile ? 480 : "auto",
+        }}>
           {/* faint topography */}
           <svg viewBox="0 0 800 1080" preserveAspectRatio="xMidYMid slice"
                style={{ position:"absolute", inset:0, width:"100%", height:"100%", opacity:.4 }}>
@@ -353,16 +399,18 @@ function HeroSplit({ t, lang, onLangToggle }) {
 
           {/* counter overlay */}
           <div style={{
-            position:"absolute", left:48, bottom:48, color:"#F4F1EA",
-            fontFamily:"Inter",
+            position:"absolute",
+            left: isMobile ? 20 : 48, bottom: isMobile ? 20 : 48,
+            color:"#F4F1EA", fontFamily:"Inter",
           }}>
             <div style={{ fontSize:11, letterSpacing:".24em", textTransform:"uppercase", color:"rgba(244,241,234,.5)" }}>Lines on the platform</div>
-            <div style={{ marginTop:8, fontSize:64, fontWeight:300, letterSpacing:"-.04em" }}>1,247</div>
+            <div style={{ marginTop:8, fontSize: isMobile ? 44 : 64, fontWeight:300, letterSpacing:"-.04em" }}>1,247</div>
             <div style={{ marginTop:8, fontSize:13, color:"rgba(244,241,234,.6)" }}>and counting · by real travelers</div>
           </div>
           <div style={{
-            position:"absolute", right:48, top:160, color:"#F4F1EA",
-            fontFamily:"Inter", textAlign:"right",
+            position:"absolute",
+            right: isMobile ? 20 : 48, top: isMobile ? 24 : 160,
+            color:"#F4F1EA", fontFamily:"Inter", textAlign:"right",
           }}>
             <div style={{ fontSize:11, letterSpacing:".24em", textTransform:"uppercase", color:"#C04A2B" }}>★ Live</div>
             <div style={{ marginTop:6, fontSize:13, color:"rgba(244,241,234,.7)" }}>4 routes being followed right now</div>
@@ -377,12 +425,15 @@ function HeroSplit({ t, lang, onLangToggle }) {
 // Top nav (used by all hero variants)
 // -----------------------------------------------------------------
 function LpNav({ t, lang, onLangToggle, dark=false }) {
+  const isMobile = useIsMobile();
   const fg = dark ? "#F4F1EA" : "#14110E";
   const subFg = dark ? "rgba(244,241,234,.6)" : "#6C645A";
   return (
     <nav style={{
       position:"absolute", top:0, left:0, right:0, zIndex:10,
-      padding:"32px 80px", display:"flex", alignItems:"center", justifyContent:"space-between",
+      padding: isMobile ? "20px 20px" : "32px 80px",
+      display:"flex", alignItems:"center", justifyContent:"space-between",
+      gap: isMobile ? 12 : 0,
     }}>
       {/* logo */}
       <a href="#" style={{
@@ -401,7 +452,7 @@ function LpNav({ t, lang, onLangToggle, dark=false }) {
 
       {/* center links */}
       <div style={{
-        display:"flex", gap:36, fontFamily:"Inter", fontSize:13,
+        display: isMobile ? "none" : "flex", gap:36, fontFamily:"Inter", fontSize:13,
         letterSpacing:".08em", color:subFg, fontWeight:500, whiteSpace:"nowrap",
       }}>
         <a href="#manifesto" style={{ color:"inherit", textDecoration:"none" }}>{t.nav.manifesto}</a>
@@ -411,7 +462,7 @@ function LpNav({ t, lang, onLangToggle, dark=false }) {
       </div>
 
       {/* right: lang + cta */}
-      <div style={{ display:"flex", alignItems:"center", gap:24, whiteSpace:"nowrap" }}>
+      <div style={{ display:"flex", alignItems:"center", gap: isMobile ? 10 : 24, whiteSpace:"nowrap" }}>
         <button onClick={onLangToggle} style={{
           background:"transparent", border:`1px solid ${dark ? "rgba(244,241,234,.2)" : "rgba(20,17,14,.15)"}`,
           color:fg, padding:"8px 14px", fontFamily:"Inter", fontSize:12,

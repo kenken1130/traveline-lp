@@ -8,9 +8,11 @@ const { useState: useState_s, useEffect: useEffect_s, useRef: useRef_s } = React
 // PROBLEM — dots vs line
 // =============================================================
 function ProblemSection({ t }) {
+  const isMobile = window.useIsMobile();
   return (
     <section id="manifesto" style={{
-      background:"#F4F1EA", color:"#14110E", padding:"160px 80px 200px",
+      background:"#F4F1EA", color:"#14110E",
+      padding: isMobile ? "80px 20px 100px" : "160px 80px 200px",
       position:"relative",
     }}>
       {/* eyebrow + heading */}
@@ -33,18 +35,24 @@ function ProblemSection({ t }) {
         </h2>
 
         <p style={{
-          marginTop: 64, maxWidth: 820,
-          fontFamily:"'Noto Sans JP', Inter, sans-serif", fontSize:20, lineHeight:1.75,
+          marginTop: isMobile ? 32 : 64, maxWidth: 820,
+          fontFamily:"'Noto Sans JP', Inter, sans-serif",
+          fontSize: isMobile ? 16 : 20, lineHeight:1.75,
           color:"#3A352E", fontWeight:400,
         }}>{t.problem.lead}</p>
 
         {/* dots vs line cards */}
         <div style={{
-          marginTop: 120, display:"grid", gridTemplateColumns:"1fr 1fr", gap:32,
+          marginTop: isMobile ? 60 : 120, display:"grid",
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+          gap: isMobile ? 20 : 32,
         }}>
           {/* dots card */}
           <div style={{
-            background:"#EDE7DB", padding:48, position:"relative", minHeight:520, overflow:"hidden",
+            background:"#EDE7DB",
+            padding: isMobile ? 28 : 48,
+            position:"relative",
+            minHeight: isMobile ? 420 : 520, overflow:"hidden",
           }}>
             <div style={{ display:"flex", justifyContent:"space-between" }}>
               <div style={{ fontFamily:"Inter", fontSize:12, letterSpacing:".24em", textTransform:"uppercase", color:"#6C645A" }}>
@@ -85,7 +93,10 @@ function ProblemSection({ t }) {
 
           {/* line card */}
           <div style={{
-            background:"#0B0A08", color:"#F4F1EA", padding:48, position:"relative", minHeight:520, overflow:"hidden",
+            background:"#0B0A08", color:"#F4F1EA",
+            padding: isMobile ? 28 : 48,
+            position:"relative",
+            minHeight: isMobile ? 420 : 520, overflow:"hidden",
           }}>
             <div style={{ display:"flex", justifyContent:"space-between" }}>
               <div style={{ fontFamily:"Inter", fontSize:12, letterSpacing:".24em", textTransform:"uppercase", color:"#C04A2B" }}>
@@ -133,9 +144,12 @@ function ProblemSection({ t }) {
 // PILLARS — 4 columns
 // =============================================================
 function PillarsSection({ t }) {
+  const isMobile = window.useIsMobile();
   return (
     <section id="product" style={{
-      background:"#0B0A08", color:"#F4F1EA", padding:"160px 80px 200px", position:"relative",
+      background:"#0B0A08", color:"#F4F1EA",
+      padding: isMobile ? "80px 20px 100px" : "160px 80px 200px",
+      position:"relative",
     }}>
       <div style={{ maxWidth: 1640, margin:"0 auto" }}>
         <div style={{
@@ -155,13 +169,16 @@ function PillarsSection({ t }) {
 
         {/* 4 pillar grid */}
         <div style={{
-          marginTop: 120, display:"grid", gridTemplateColumns:"repeat(4, 1fr)", gap:0,
+          marginTop: isMobile ? 60 : 120, display:"grid",
+          gridTemplateColumns: isMobile ? "1fr" : "repeat(4, 1fr)", gap:0,
           borderTop:"1px solid #2B2722",
         }}>
           {t.pillars.items.map((p, i) => (
             <article key={i} style={{
-              padding:"56px 36px 48px 0", marginRight: i<3 ? 36 : 0,
-              borderRight: i<3 ? "1px solid #2B2722" : "none",
+              padding: isMobile ? "40px 0 32px" : "56px 36px 48px 0",
+              marginRight: isMobile ? 0 : (i<3 ? 36 : 0),
+              borderRight: isMobile ? "none" : (i<3 ? "1px solid #2B2722" : "none"),
+              borderBottom: isMobile && i<3 ? "1px solid #2B2722" : "none",
               position:"relative",
             }}>
               <div style={{
@@ -171,7 +188,8 @@ function PillarsSection({ t }) {
 
               <h3 style={{
                 margin:"24px 0 0", fontFamily:"'Noto Serif JP', serif", fontWeight:500,
-                fontSize:36, color:"#F4F1EA", lineHeight:1.15, minHeight: 88,
+                fontSize: isMobile ? 28 : 36, color:"#F4F1EA", lineHeight:1.15,
+                minHeight: isMobile ? "auto" : 88,
               }}>{p.title}</h3>
 
               {/* visual */}
@@ -287,13 +305,16 @@ function PillarVisual({ idx }) {
 // ROUTES — hover preview gallery
 // =============================================================
 function RoutesSection({ t }) {
+  const isMobile = window.useIsMobile();
   const [activeId, setActiveId] = useState_s(t.routes.list[0].id);
   const active = t.routes.list.find(r => r.id === activeId);
   const geom = window.LP_ROUTES_GEOM[activeId];
 
   return (
     <section id="routes" style={{
-      background:"#F4F1EA", color:"#14110E", padding:"160px 80px 200px", position:"relative",
+      background:"#F4F1EA", color:"#14110E",
+      padding: isMobile ? "80px 20px 100px" : "160px 80px 200px",
+      position:"relative",
     }}>
       <div style={{ maxWidth: 1640, margin:"0 auto" }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end", flexWrap:"wrap", gap:32 }}>
@@ -319,7 +340,9 @@ function RoutesSection({ t }) {
         </div>
 
         <div style={{
-          marginTop: 96, display:"grid", gridTemplateColumns:"1fr 1.1fr", gap:64, alignItems:"stretch",
+          marginTop: isMobile ? 48 : 96, display:"grid",
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1.1fr",
+          gap: isMobile ? 40 : 64, alignItems:"stretch",
         }}>
           {/* left — route list */}
           <div style={{ borderTop:"1px solid #D6CDB8" }}>
@@ -329,21 +352,27 @@ function RoutesSection({ t }) {
                 <button key={r.id}
                   onMouseEnter={()=>setActiveId(r.id)}
                   onFocus={()=>setActiveId(r.id)}
+                  onClick={()=>setActiveId(r.id)}
                   style={{
-                    width:"100%", display:"flex", alignItems:"center", gap:24,
-                    padding:"28px 0", textAlign:"left", background:"transparent",
+                    width:"100%", display:"flex",
+                    flexWrap: isMobile ? "wrap" : "nowrap",
+                    alignItems: isMobile ? "flex-start" : "center",
+                    gap: isMobile ? 12 : 24,
+                    padding: isMobile ? "20px 0" : "28px 0",
+                    textAlign:"left", background:"transparent",
                     border:"none", borderBottom:"1px solid #D6CDB8", cursor:"pointer",
                     transition:"padding 280ms cubic-bezier(.65,.05,.36,1), color 280ms",
-                    paddingLeft: isActive ? 24 : 0,
+                    paddingLeft: isActive && !isMobile ? 24 : 0,
                   }}>
                   <span style={{
                     width: isActive ? 32 : 8, height:2, background: isActive ? "#C04A2B" : "#D6CDB8",
                     transition:"width 280ms cubic-bezier(.65,.05,.36,1), background 200ms",
                     flexShrink:0,
                   }}/>
-                  <div style={{ flex:1 }}>
+                  <div style={{ flex:1, minWidth: isMobile ? "70%" : "auto" }}>
                     <div style={{
-                      fontFamily:"'Noto Serif JP', serif", fontWeight:500, fontSize:28,
+                      fontFamily:"'Noto Serif JP', serif", fontWeight:500,
+                      fontSize: isMobile ? 22 : 28,
                       color: isActive ? "#14110E" : "#6C645A", transition:"color 200ms",
                       lineHeight:1.2,
                     }}>{r.name}</div>
@@ -356,8 +385,13 @@ function RoutesSection({ t }) {
                     </div>
                   </div>
                   <div style={{
-                    display:"flex", gap:24, fontFamily:"Inter", fontSize:14,
-                    color:"#6C645A", textAlign:"right",
+                    display:"flex",
+                    gap: isMobile ? 14 : 24,
+                    fontFamily:"Inter", fontSize: isMobile ? 12 : 14,
+                    color:"#6C645A",
+                    textAlign: isMobile ? "left" : "right",
+                    flexBasis: isMobile ? "100%" : "auto",
+                    paddingLeft: isMobile ? 0 : 0,
                   }}>
                     <div><b style={{ color:"#14110E", fontWeight:500 }}>{r.days}</b><span style={{ color:"#8A8275", fontSize:11, marginLeft:4 }}>{t.routes.days}</span></div>
                     <div><b style={{ color:"#14110E", fontWeight:500 }}>{r.stops}</b><span style={{ color:"#8A8275", fontSize:11, marginLeft:4 }}>{t.routes.stops}</span></div>
@@ -369,8 +403,8 @@ function RoutesSection({ t }) {
           </div>
 
           {/* right — preview map */}
-          <div style={{ position:"relative", minHeight: 600 }}>
-            <RoutePreview activeId={activeId} active={active} t={t}/>
+          <div style={{ position:"relative", minHeight: isMobile ? 480 : 600 }}>
+            <RoutePreview activeId={activeId} active={active} t={t} isMobile={isMobile}/>
           </div>
         </div>
       </div>
@@ -378,11 +412,13 @@ function RoutesSection({ t }) {
   );
 }
 
-function RoutePreview({ activeId, active, t }) {
+function RoutePreview({ activeId, active, t, isMobile }) {
   return (
     <div style={{
-      position:"sticky", top:64,
-      background:"#0B0A08", color:"#F4F1EA", height:680, position:"relative", overflow:"hidden",
+      position: isMobile ? "relative" : "sticky", top: isMobile ? 0 : 64,
+      background:"#0B0A08", color:"#F4F1EA",
+      height: isMobile ? 480 : 680,
+      overflow:"hidden",
     }}>
       {/* map background */}
       <svg viewBox="0 0 800 680" preserveAspectRatio="xMidYMid slice"
@@ -399,13 +435,15 @@ function RoutePreview({ activeId, active, t }) {
 
       {/* overlay info */}
       <div style={{
-        position:"absolute", left:32, top:32, right:32, display:"flex", justifyContent:"space-between",
+        position:"absolute",
+        left: isMobile ? 20 : 32, top: isMobile ? 20 : 32, right: isMobile ? 20 : 32,
+        display:"flex", justifyContent:"space-between", gap: 12,
       }}>
         <div>
           <div style={{ fontFamily:"Inter", fontSize:11, letterSpacing:".24em",
                         textTransform:"uppercase", color:"#C04A2B" }}>★ LIVE PREVIEW</div>
           <div style={{ marginTop:12, fontFamily:"'Noto Serif JP', serif", fontWeight:500,
-                        fontSize:28, color:"#F4F1EA" }}>{active.name}</div>
+                        fontSize: isMobile ? 22 : 28, color:"#F4F1EA" }}>{active.name}</div>
           <div style={{ marginTop:6, fontFamily:"Inter", fontSize:12,
                         letterSpacing:".14em", textTransform:"uppercase", color:"rgba(244,241,234,.5)" }}>
             {window.LP_ROUTES_GEOM[activeId].bbox}
@@ -420,32 +458,35 @@ function RoutePreview({ activeId, active, t }) {
 
       {/* bottom stats */}
       <div style={{
-        position:"absolute", left:32, bottom:32, right:32,
-        display:"grid", gridTemplateColumns:"repeat(4, 1fr)", gap:0,
-        borderTop:"1px solid #2B2722", paddingTop:24,
+        position:"absolute",
+        left: isMobile ? 20 : 32, bottom: isMobile ? 20 : 32, right: isMobile ? 20 : 32,
+        display:"grid",
+        gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
+        gap: isMobile ? "16px 12px" : 0,
+        borderTop:"1px solid #2B2722", paddingTop: isMobile ? 16 : 24,
       }}>
         <div>
           <div style={{ fontFamily:"Inter", fontSize:10, letterSpacing:".24em",
                         textTransform:"uppercase", color:"rgba(244,241,234,.5)" }}>Days</div>
-          <div style={{ marginTop:8, fontFamily:"Inter", fontSize:36, fontWeight:300,
+          <div style={{ marginTop:8, fontFamily:"Inter", fontSize: isMobile ? 26 : 36, fontWeight:300,
                         letterSpacing:"-.03em", color:"#F4F1EA" }}>{active.days}</div>
         </div>
         <div>
           <div style={{ fontFamily:"Inter", fontSize:10, letterSpacing:".24em",
                         textTransform:"uppercase", color:"rgba(244,241,234,.5)" }}>Distance</div>
-          <div style={{ marginTop:8, fontFamily:"Inter", fontSize:36, fontWeight:300,
+          <div style={{ marginTop:8, fontFamily:"Inter", fontSize: isMobile ? 26 : 36, fontWeight:300,
                         letterSpacing:"-.03em", color:"#F4F1EA" }}>{active.km}<span style={{ fontSize:18, color:"rgba(244,241,234,.5)", marginLeft:4 }}>km</span></div>
         </div>
         <div>
           <div style={{ fontFamily:"Inter", fontSize:10, letterSpacing:".24em",
                         textTransform:"uppercase", color:"rgba(244,241,234,.5)" }}>Stops</div>
-          <div style={{ marginTop:8, fontFamily:"Inter", fontSize:36, fontWeight:300,
+          <div style={{ marginTop:8, fontFamily:"Inter", fontSize: isMobile ? 26 : 36, fontWeight:300,
                         letterSpacing:"-.03em", color:"#F4F1EA" }}>{active.stops}</div>
         </div>
         <div>
           <div style={{ fontFamily:"Inter", fontSize:10, letterSpacing:".24em",
                         textTransform:"uppercase", color:"rgba(244,241,234,.5)" }}>{t.routes.followers}</div>
-          <div style={{ marginTop:8, fontFamily:"Inter", fontSize:36, fontWeight:300,
+          <div style={{ marginTop:8, fontFamily:"Inter", fontSize: isMobile ? 26 : 36, fontWeight:300,
                         letterSpacing:"-.03em", color:"#C04A2B" }}>{active.followers}</div>
         </div>
       </div>
@@ -472,9 +513,12 @@ function RouteMap({ points, width, height }) {
 // FOOTER — waitlist + owner CTA + legal
 // =============================================================
 function FooterSection({ t }) {
+  const isMobile = window.useIsMobile();
   return (
     <section id="waitlist" style={{
-      background:"#0B0A08", color:"#F4F1EA", padding:"180px 80px 80px", position:"relative", overflow:"hidden",
+      background:"#0B0A08", color:"#F4F1EA",
+      padding: isMobile ? "100px 20px 60px" : "180px 80px 80px",
+      position:"relative", overflow:"hidden",
     }}>
       {/* ambient line */}
       <svg viewBox="0 0 1920 600" preserveAspectRatio="none"
@@ -508,7 +552,11 @@ function FooterSection({ t }) {
           {t.footer.h}
         </h2>
 
-        <div style={{ marginTop:80, display:"grid", gridTemplateColumns:"1.4fr 1fr", gap:80, alignItems:"end" }}>
+        <div style={{
+          marginTop: isMobile ? 48 : 80, display:"grid",
+          gridTemplateColumns: isMobile ? "1fr" : "1.4fr 1fr",
+          gap: isMobile ? 40 : 80, alignItems:"end",
+        }}>
           <div>
             <p style={{
               maxWidth: 620, fontFamily:"'Noto Sans JP', Inter, sans-serif",
@@ -545,7 +593,7 @@ function FooterSection({ t }) {
 
         {/* bottom — legal */}
         <div style={{
-          marginTop:140, paddingTop:32, borderTop:"1px solid #2B2722",
+          marginTop: isMobile ? 80 : 140, paddingTop:32, borderTop:"1px solid #2B2722",
           display:"flex", justifyContent:"space-between", alignItems:"flex-end", gap:32, flexWrap:"wrap",
         }}>
           <div>
